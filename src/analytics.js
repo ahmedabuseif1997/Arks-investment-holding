@@ -1,0 +1,6 @@
+export const OPEN=r=>!['Completed','Not applicable'].includes(r.status);
+export const GROUPS=['FTA','DET','RTA','MOHRE','ICP / GDRFA','RERA / DLD','Free zones','Other'];
+export function authorityGroup(a){if(a==='FTA')return'FTA';if(a.startsWith('DET '))return'DET';if(a==='RTA'||a==='MOHRE'||a==='ICP / GDRFA'||a==='RERA / DLD')return a;if(/ADGM|RAKEZ|Ajman|Shams/.test(a))return'Free zones';return'Other'}
+export function cellState(rows){if(!rows.length)return'empty';if(rows.some(r=>r.rag==='Overdue'))return'overdue';if(rows.some(r=>r.rag==='Due soon'))return'soon';if(rows.some(r=>r.rag==='Date to confirm'||r.rag==='Done (no evidence)'))return'unknown';if(rows.every(r=>r.status==='Not applicable'))return'na';if(rows.every(r=>!OPEN(r)))return'done';return'track'}
+export const LABELS={overdue:'Overdue',soon:'Due within 30 days',unknown:'Date or evidence to confirm',done:'Completed',track:'No near-term deadline',empty:'No tracked obligations',na:'Not applicable'};
+export function nextActions(rows){const rank={Overdue:0,'Due soon':1,'Date to confirm':2,Upcoming:3,'On track':4};return rows.filter(OPEN).sort((a,b)=>(rank[a.rag]??5)-(rank[b.rag]??5)||(a.priority==='High'?-1:0)-(b.priority==='High'?-1:0)||(new Date(a.due||'2100-01-01')-new Date(b.due||'2100-01-01')))}
