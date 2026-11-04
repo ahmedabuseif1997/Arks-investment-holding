@@ -1,20 +1,28 @@
 # ARKS Group
 
-React/Vite working preview using the ARKS logo and the 4 November 2026 compliance-register snapshot.
+Live app: https://arks-group.vercel.app
 
-Run: npm install, then npm run dev. Production check: npm run build.
-Vercel settings are in vercel.json.
+## Implemented
+React/Vite app on Vercel using the supplied ARKS logo. Supabase project izahgrueboaiagbwsalk is in Mumbai (ap-south-1). Imported 126 obligations and 17 company/group records from the 4 November 2026 sheet snapshot. Source sheet is unchanged; synchronization is not automatic.
 
-## Current state
-Overview, companies, searchable register, calendar, owner workload, evidence references, browser-local edits and JSON export work. Data is a dated import, not live Google Sheets synchronization. Document uploads, authentication, approvals, recurring generation and notifications are not activated. Do not deploy the current seed data publicly; it contains internal compliance information. Move seed records into an authenticated database before production publication.
+Staff password sign-in, password recovery, private document uploads (PDF/JPG/PNG/DOCX/XLSX, 20 MB), short-lived download links, shared task updates, owner email assignment, staff allowlisting, company/register/calendar/workload views, and register export are implemented.
 
-## Agreed production architecture
-Vercel hosts the app. Supabase provides invite-only staff authentication, Postgres shared records and private Storage for company/obligation documents. Apply row-level security to all tables and storage objects. Staff access must derive from company memberships, with group administrators explicitly assigned. Use short-lived signed download URLs. Never put a service-role key in browser code.
+Administrator: ahmed@arks.ae. Authentication invitation sent. Set password through the invitation to complete account activation. Staff allowlisting and Authentication invitations are separate steps. Employees see their own obligations and documents for companies where they have assignments; Finance and Admin see all records. Finance/Admin approve closure. Uploaded files are not automatically treated as task evidence: reviewers enter the relevant evidence reference.
 
-## Employee email alerts
-Send to the assigned employee's verified account email; never infer an email from a name. Several imported owners are placeholders and need real staff accounts and email addresses before delivery.
+## Verification
+Production build passed. Live sign-in screen visually verified. Anonymous queries returned no rows for staff, companies, obligations or documents; private storage listed no files. Authenticated editing, uploads and employee isolation still require signed-in end-to-end checks. Do not claim these checks have passed.
 
-Events: assignment/reassignment, configurable pre-deadline reminders (suggested 30/14/7/1 days), overdue daily digest, returned evidence, and manager escalation after configurable overdue age. UAE time: Asia/Dubai. A scheduled server job selects eligible reminders. Use an email provider with a verified sending domain; record provider message IDs and send status. A unique obligation/period/recipient/reminder-key prevents duplicates. Check completion and current assignment immediately before sending. Include a signed-in task link, company, deadline and action; do not attach private documents. Log failures and support bounded retries. No mail credentials in frontend code.
+## Email delivery pending
+api/reminders.js and the daily 08:00 Asia/Dubai Vercel schedule are prepared. Sender: ARKS Group <ahmed@arks.ae>. Activate only after configuring a verified arks.ae sending domain and server-only RESEND_API_KEY, SUPABASE_SERVICE_ROLE_KEY, CRON_SECRET and APP_URL=https://arks-group.vercel.app in Vercel. Never place privileged keys in frontend source. The endpoint rejects unauthenticated requests and returns a configuration error while credentials are absent.
 
-## Setup dependencies
-Create Supabase project named ARKS Group, retain database password privately, and supply only project URL plus publishable key. Configure staff invitations, production redirect URL, schema and storage policies. Connect Vercel account and configure server-side environment variables. Select email provider and verify ARKS sender domain. Test with authorized staff accounts before enabling scheduled delivery.
+Current reminder code covers due in 30/14/7/1 days, due today and daily overdue alerts to active assigned staff, with a send log and idempotency keys. Assignment alerts, manager escalation and returned-evidence emails remain follow-up work. Pending send recovery and delivery tests must be completed before enabling real mail.
+
+## Remaining product work
+Automatic recurring-task generation, detailed approval/audit history, editable deadlines, employee/vehicle subregisters, and live sheet sync are not implemented. Original Tokyo project was not used for app data and has not been deleted.
+
+## Development
+npm install
+npm run dev
+npm run build
+
+Public repository contains application code, logo, publishable Supabase key and schema only. Imported source JSON and seed SQL are ignored and were not pushed. Database policies are in supabase/schema.sql. The connected repository checkout lives under work/arks-repository; keep it synchronized when editing this deliverable copy.
