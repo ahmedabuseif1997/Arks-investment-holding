@@ -26,3 +26,12 @@ npm run dev
 npm run build
 
 Public repository contains application code, logo, publishable Supabase key and schema only. Imported source JSON and seed SQL are ignored and were not pushed. Database policies are in supabase/schema.sql. The connected repository checkout lives under work/arks-repository; keep it synchronized when editing this deliverable copy.
+
+## Members & access — 5 November 2026
+Administrators now manage members directly from a dedicated sidebar page. Presets: Administrator, Finance, Manager, Employee, Viewer and Custom. Non-admin capabilities are explicit and editable; scope is all companies, selected companies or assigned tasks. Permissions cover dashboard, company/task/document viewing, task updates/approval/assignment, document uploads, workload and the export button. Read access inherently permits copying readable information; the export setting controls the app export feature.
+
+Membership changes go through a validated RPC, are audited, preserve an active administrator and block self-demotion/suspension. Direct authenticated writes to staff and obligation tables are revoked. Database and Storage policies enforce scope and read/write capabilities. Staff access changes take effect on subsequent database requests; cached/downloaded data cannot be recalled, and issued document links expire in 60 seconds.
+
+Adding a member saves access then requests a Supabase email sign-in link through an isolated non-persistent Auth client. Delivery failures are reported separately from access saves; admins can resend links. No email is sent merely by opening or editing a member. Supabase SMTP restrictions may require sender configuration for new recipient addresses. This does not activate the separate compliance-reminder service.
+
+Migration: supabase/migrations/20261104201523_member_access.sql (applied through the authenticated SQL console; baseline schema remains supabase/schema.sql). Transactional security checks in supabase/member-access-checks.sql passed for assigned/company scopes, employee updates, viewer write/upload denial, privilege escalation denial, scoped assignment, suspension, admin member changes and self-lockout prevention. Test records were rolled back. Frontend preset checks passed. Logo display size increased on login and sidebar.
