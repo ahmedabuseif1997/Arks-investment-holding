@@ -49,3 +49,6 @@ main{margin:0;width:100%}.app header{position:sticky;top:0;z-index:12;height:aut
 @keyframes phone-sheet-enter{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.login-approved *,.mobile-workspace-sheet{animation:none!important;transition:none!important}.login-approved .approved-office{display:none}}
 @media(max-width:700px){.login-approved .login-story{flex:0 0 auto}}
+
+.obligation-drawer-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.obligation-drawer-heading>.eyebrow{min-width:0;overflow-wrap:anywhere;line-height:1.7;margin:0;padding-top:8px}.obligation-drawer-heading>.close{float:none;flex-shrink:0;display:grid;place-items:center;min-width:40px;min-height:40px;padding:8px;border-radius:9px;background:var(--surface2);border:1px solid var(--line)}.obligation-drawer>h2{margin-top:15px;line-height:1.35}
+@media(max-width:700px){.overlay{z-index:60}.drawer{padding-top:calc(var(--drawer-safe-top,env(safe-area-inset-top,0px)) + 16px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px);scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}.obligation-drawer-heading{gap:12px}.obligation-drawer-heading>.eyebrow{font-size:9px;letter-spacing:1px;padding-top:9px}.obligation-drawer>h2{font-size:22px;letter-spacing:-.5px;margin-top:14px}}
