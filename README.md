@@ -73,3 +73,10 @@ Conversations contains an Everyone room and private manager/team rooms. Each obl
 Activity history shows recent register/group changes, member-access changes and accessible conversation events. Owners see all management entries; managers see their own management entries. Audit tables have no client write/delete policies. Access changes continue to use the existing member audit.
 
 Verification: transactional database checks for company create/rename/archive, invalid dates, manager scope and role escalation, member and group reassignment, private-room isolation, removal approval and immutable history all passed with rollback (no sample accounts/messages retained). Mobile owner/manager flows, permitted roles, group controls, new-obligation fields and private-room selector were checked at 388px without horizontal overflow. Production build passed.
+
+## Approved login and phone navigation — 5 November 2026
+The approved login keeps the existing composition, adds a once-only entrance sequence and replaces moving dots with label-free government, document, calendar and email symbols. Icons stay in open margins, pause while the page is hidden and respect reduced-motion preferences. The phone introduction is compact so the login form remains on the first screen. No example notifications or review controls are included in production.
+
+Phone navigation uses a fixed bottom bar for Overview, Register, Calendar, Chat and More, filtered by the signed-in member's existing permissions. More opens an accessible bottom sheet containing permitted workspace sections, profile, installation and sign-out. The hamburger is removed; desktop navigation remains in the sidebar. The promotional dashboard banner is hidden on phones. Safe-area spacing keeps content and the assistant clear of the bottom bar.
+
+Checks: production build, desktop login overflow, 393px/320px first-screen login fit, icon count/scaling, permission-filtered bottom tabs and More options, document-route selection, sheet close/body-scroll restoration passed. Navigation checks used synthetic local data; no real messages or invitations were sent.
