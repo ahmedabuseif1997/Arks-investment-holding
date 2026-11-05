@@ -16,7 +16,7 @@ Production build passed. Live sign-in screen visually verified. Anonymous querie
 api/reminders.js runs daily at 08:00 Asia/Dubai using Microsoft 365 from ahmed@arks.ae. It covers due in 30/14/7/1 days, due today and daily overdue alerts, with recipient/day deduplication and conservative recovery of uncertain sends. Recipients include the permitted responsible member, company managers and configured owners. Immediate assignment and returned-evidence emails remain follow-up work. See activation details below.
 
 ## Remaining product work
-Automatic recurring-task generation, detailed approval/audit history, editable deadlines, employee/vehicle subregisters, and live sheet sync are not implemented. Original Tokyo project was not used for app data and has not been deleted.
+Automatic recurring-task generation, employee/vehicle subregisters and live sheet sync are not implemented. Editable deadlines and management/conversation audit history are implemented below. Original Tokyo project was not used for app data and has not been deleted.
 
 ## Development
 npm install
@@ -26,7 +26,7 @@ npm run build
 Public repository contains application code, logo, publishable Supabase key and schema only. Imported source JSON and seed SQL are ignored and were not pushed. Database policies are in supabase/schema.sql. The connected repository checkout lives under work/arks-repository; keep it synchronized when editing this deliverable copy.
 
 ## Members & access — 5 November 2026
-Administrators now manage members directly from a dedicated sidebar page. Presets: Administrator, Finance, Manager, Employee, Viewer and Custom. Non-admin capabilities are explicit and editable; scope is all companies, selected companies or assigned tasks. Permissions cover dashboard, company/task/document viewing, task updates/approval/assignment, document uploads, workload and the export button. Read access inherently permits copying readable information; the export setting controls the app export feature.
+Owners manage all members from Members & access; managers manage their assigned reports within their own access limits. Presets: Owner, Finance, Manager, Employee, Viewer and Custom. Non-admin capabilities are explicit and editable; scope is all companies, selected companies or assigned tasks. Permissions cover dashboard, company/task/document viewing, task updates/approval/assignment, document uploads, workload and the export button. Read access inherently permits copying readable information; the export setting controls the app export feature.
 
 Membership changes go through a validated RPC, are audited, preserve an active administrator and block self-demotion/suspension. Direct authenticated writes to staff and obligation tables are revoked. Database and Storage policies enforce scope and read/write capabilities. Staff access changes take effect on subsequent database requests; cached/downloaded data cannot be recalled, and issued document links expire in 60 seconds.
 
