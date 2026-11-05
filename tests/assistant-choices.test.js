@@ -1,0 +1,3 @@
+import test from'node:test';import assert from'node:assert/strict';import{taskChoiceRefs}from'../lib/assistant-choices.js';import{assistantResponseFormat}from'../lib/assistant-schema.js';
+test('task choices contain only visible refs, without duplicates or model labels',()=>{assert.deepEqual(taskChoiceRefs(['C020','C999','C019','C020',{ref:'C021'},null],[{ref:'C019'},{ref:'C020'}]),['C020','C019']);assert.deepEqual(taskChoiceRefs('C020',[{ref:'C020'}]),[])});
+test('choice list is bounded and structured output requires choices',()=>{const tasks=Array.from({length:12},(_,i)=>({ref:`C${i}`}));assert.equal(taskChoiceRefs(tasks.map(t=>t.ref),tasks).length,8);assert.ok(assistantResponseFormat.json_schema.schema.required.includes('choices'))});
