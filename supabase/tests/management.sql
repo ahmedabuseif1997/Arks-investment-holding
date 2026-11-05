@@ -1,0 +1,26 @@
+begin;
+select set_config('request.jwt.claims','{"sub":"082bea37-613b-4c76-a0e4-0d521399d5f8","email":"ahmed@arks.ae","role":"authenticated"}',true);
+set local role authenticated;
+select public.arks_save_managed_member('arks-mgr-test@example.com','Test Manager','manager','selected',array['ARKS Holding (ADGM)'],array['view_team','view_obligations','edit_obligations','approve_obligations','assign_tasks'],true,null,null);
+select public.arks_save_managed_member('arks-member-test@example.com','Test Member','employee','assigned','{}',array['view_obligations'],true,'arks-mgr-test@example.com',null);
+select public.arks_manage_data('save_group','{"name":"Test management group","manager_email":"arks-mgr-test@example.com"}');
+select set_config('request.jwt.claims','{"sub":"11111111-1111-4111-8111-111111111111","email":"arks-mgr-test@example.com","role":"authenticated"}',true);
+do $$declare r jsonb; gid uuid; begin
+perform public.arks_save_managed_member('arks-member-two@example.com','Second Member','employee','assigned','{}',array['view_obligations'],true,null,null);
+begin perform public.arks_save_managed_member('ahmed@arks.ae','Changed','employee','assigned','{}',array['view_obligations'],true,null,null);raise exception 'TEST FAILED: manager changed owner';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+begin perform public.arks_save_managed_member('arks-member-two@example.com','Second Member','admin','all','{}','{}',true,null,null);raise exception 'TEST FAILED: elevated role';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+begin perform public.arks_manage_data('save_company','{"details":["","Injected company","","Active","","","","","","","","","","","",""]}');raise exception 'TEST FAILED: manager changed companies';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+begin perform public.arks_manage_data('save_task','{"data":{"entity":"ARKS Groups Investment (DED)","title":"Test","authority":"FTA","owner":"Test management group","status":"Not started"}}');raise exception 'TEST FAILED: company escape';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+begin perform public.arks_assign_task('C001','arks-member-test@example.com');raise exception 'TEST FAILED: legacy assignment escaped team';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+begin perform public.arks_update_task('C001','In progress','','');raise exception 'TEST FAILED: legacy status escaped team';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+r:=public.arks_manage_data('save_task','{"owner_email":"arks-member-test@example.com","data":{"entity":"ARKS Holding (ADGM)","title":"Test obligation","authority":"FTA","owner":"Test management group","status":"Not started","due":"","information_status":"Needs information"}}');
+if not exists(select 1 from public.arks_obligations where ref=r->>'ref' and owner_email='arks-member-test@example.com') then raise exception 'TEST FAILED: save obligation';end if;
+select id into gid from public.arks_groups where name='Test management group';
+begin perform public.arks_manage_data('archive_group',jsonb_build_object('id',gid));raise exception 'TEST FAILED: removed occupied group';exception when others then if SQLERRM like 'TEST FAILED%' then raise;end if;end;
+perform public.arks_save_managed_member('arks-member-test@example.com','Test Member','employee','assigned','{}',array['view_obligations'],false,null,'arks-member-two@example.com');
+if not exists(select 1 from public.arks_obligations where ref=r->>'ref' and owner_email='arks-member-two@example.com') then raise exception 'TEST FAILED: member reassignment';end if;
+perform public.arks_manage_data('save_group','{"name":"Test replacement group"}');
+perform public.arks_manage_data('archive_group',jsonb_build_object('id',gid,'replacement',(select id from public.arks_groups where name='Test replacement group')));
+if not exists(select 1 from public.arks_obligations where ref=r->>'ref' and data->>'owner'='Test replacement group' and owner_email is null) then raise exception 'TEST FAILED: group reassignment';end if;
+end $$;
+rollback;
