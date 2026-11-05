@@ -38,6 +38,9 @@
     },
     "api/assistant-workflow.js": {
       "maxDuration": 60
+    },
+    "api/reminders.js": {
+      "maxDuration": 300
     }
   }
 }
