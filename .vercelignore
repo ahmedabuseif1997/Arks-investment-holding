@@ -1,0 +1,7 @@
+.git/
+node_modules/
+supabase/.temp/
+supabase/member-access.sql
+qa-*.html
+src/qa-*.jsx
+.env*

@@ -4,3 +4,5 @@ test('urgent obligations control cell status regardless of row order',()=>{const
 test('all authorities are represented without dropping unfamiliar regulators',()=>{assert.equal(authorityGroup('RTA'),'RTA');assert.equal(authorityGroup('DET (Dubai Economy & Tourism)'),'DET');assert.equal(authorityGroup('RAKEZ'),'Free zones');assert.equal(authorityGroup('New authority'),'Other')});
 test('priority queue excludes closed items and puts overdue first',()=>{const rows=[{ref:'a',status:'Completed',rag:'Done'},{ref:'b',status:'Not started',rag:'Date to confirm'},{ref:'c',status:'Not started',rag:'Overdue'},{ref:'d',status:'Not applicable',rag:'N/A'}];assert.deepEqual(nextActions(rows).map(r=>r.ref),['c','b'])});
 test('completion awaiting approval is not shown as on track',()=>{assert.equal(cellState([{status:'Awaiting manager approval',rag:'Awaiting approval'}]),'unknown')});
+
+test('plain DET authority remains in the DET heatmap group',()=>{assert.equal(authorityGroup('DET'),'DET')});
