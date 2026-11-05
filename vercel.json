@@ -31,5 +31,13 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 60
+    },
+    "api/assistant-workflow.js": {
+      "maxDuration": 60
+    }
+  }
 }

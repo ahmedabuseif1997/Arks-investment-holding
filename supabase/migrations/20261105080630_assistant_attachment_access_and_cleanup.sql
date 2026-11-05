@@ -1,0 +1,7 @@
+drop policy assistant_upload_read on public.arks_assistant_uploads;
+create policy assistant_upload_read on public.arks_assistant_uploads for select to authenticated using(created_by=(select auth.uid()) and (arks_private.member()).email is not null and ((state='staged' and arks_private.allowed('view_documents') and arks_private.allowed('upload_documents')) or (state='committed' and exists(select 1 from public.arks_documents d where d.id=document_id))));
+drop policy assistant_stage_read on storage.objects;
+create policy assistant_stage_read on storage.objects for select to authenticated using(bucket_id='arks-assistant-staging' and (storage.foldername(name))[1]=(select auth.uid())::text and exists(select 1 from public.arks_assistant_uploads u where u.storage_path=objects.name and u.created_by=(select auth.uid())));
+create or replace function arks_private.assistant_can_cleanup(object_path text) returns boolean language sql stable security definer set search_path='' as $$select auth.uid() is not null and (arks_private.member()).email is not null and (storage.foldername(object_path))[1]=auth.uid()::text and not exists(select 1 from public.arks_documents d where d.storage_path=object_path)$$;
+revoke all on function arks_private.assistant_can_cleanup(text) from public,anon;grant execute on function arks_private.assistant_can_cleanup(text) to authenticated;
+create policy assistant_unindexed_cleanup on storage.objects for delete to authenticated using(bucket_id='arks-documents' and arks_private.assistant_can_cleanup(name));
